@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  app_backend:
+    build: ./Backend
+    container_name: app_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb-service:27017/
+      # Mysql finance
+      - MYSQL_HOST=mysql_finances
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=financedb
+      # Mysql users
+      - MYSQL_USERDB_HOST=mysql_users
+      - MYSQL_USERDB_USER=root
+      - MYSQL_USERDB_PASSWORD=password
+      - MYSQL_USERDB_DATABASE=userdb
+    depends_on:
+      - mongodb
+      - mysql_finances 
+      - mysql_users
+  
+  app_frontend:
+    build: ./Fronted
+    container_name: app_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - app_backend
+
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb-service
+    environment:
+      MONGO_INITDB_DATABASE: financedb
+    volumes:
+      - mongo-data:/data/db
+      - ./volumes/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    ports:
+      - "27017:27017"
+
+  mysql_finances:
+    image: mysql:8.0
+    container_name: mysql_finances
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: financedb
+    volumes:
+      - mysql-data-finances:/var/lib/mysql
+      - ./volumes/mysql-finances-init.sql:/docker-entrypoint-initdb.d/mysql-finances-init.sql
+    ports:
+      - "3306:3306"
+
+  mysql_users:
+    image: mysql:8.0
+    container_name: mysql_users
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: userdb
+    volumes:
+      - mysql-data-users:/var/lib/mysql
+      - ./volumes/mysql-users-init.sql:/docker-entrypoint-initdb.d/mysql-users-init.sql
+    ports:
+      - "3307:3306"
+
+  adminer_finances:
+    image: adminer:latest
+    container_name: adminer_finances
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql_finances
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_finances
+
+  adminer_users:
+    image: adminer:latest
+    container_name: adminer_users
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql_users
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql_users
+    
+
+  mongo_express:
+    image: mongo-express:latest
+    container_name: mongo_express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb-service
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo-data:
+  mysql-data-finances:
+  mysql-data-users:
+# /var/lib/docker/volumes/mongo-data/_data
+# /var/lib/docker/volumes/mysql-data-finances/_data
+# /var/lib/docker/volumes/mysql-data-users/_data
