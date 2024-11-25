@@ -1,35 +1,35 @@
 version: '3.8'
 
 services:
-  app_backend:
+  app-backend:
     build: ./Backend
-    container_name: app_backend
+    container_name: app-backend
     ports:
       - "5000:5000"
     environment:
       - MONGO_URI=mongodb://mongodb-service:27017/
       # Mysql finance
-      - MYSQL_HOST=mysql_finances
+      - MYSQL_HOST=mysql-finances
       - MYSQL_USER=root
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=financedb
       # Mysql users
-      - MYSQL_USERDB_HOST=mysql_users
+      - MYSQL_USERDB_HOST=mysql-users
       - MYSQL_USERDB_USER=root
       - MYSQL_USERDB_PASSWORD=password
       - MYSQL_USERDB_DATABASE=userdb
     depends_on:
       - mongodb
-      - mysql_finances 
-      - mysql_users
+      - mysql-finances 
+      - mysql-users
   
-  app_frontend:
+  app-frontend:
     build: ./Fronted
-    container_name: app_frontend
+    container_name: app-frontend
     ports:
       - "80:80"
     depends_on:
-      - app_backend
+      - app-backend
 
   mongodb:
     image: mongo:5.0
@@ -42,9 +42,9 @@ services:
     ports:
       - "27017:27017"
 
-  mysql_finances:
+  mysql-finances:
     image: mysql:8.0
-    container_name: mysql_finances
+    container_name: mysql-finances
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: financedb
@@ -54,9 +54,9 @@ services:
     ports:
       - "3306:3306"
 
-  mysql_users:
+  mysql-users:
     image: mysql:8.0
-    container_name: mysql_users
+    container_name: mysql-users
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: userdb
@@ -66,30 +66,30 @@ services:
     ports:
       - "3307:3306"
 
-  adminer_finances:
+  adminer-finances:
     image: adminer:latest
-    container_name: adminer_finances
+    container_name: adminer-finances
     environment:
-      - ADMINER_DEFAULT_SERVER=mysql_finances
+      - ADMINER_DEFAULT_SERVER=mysql-finances
     ports:
       - "8080:8080"
     depends_on:
-      - mysql_finances
+      - mysql-finances
 
-  adminer_users:
+  adminer-users:
     image: adminer:latest
-    container_name: adminer_users
+    container_name: adminer-users
     environment:
-      - ADMINER_DEFAULT_SERVER=mysql_users
+      - ADMINER_DEFAULT_SERVER=mysql-users
     ports:
       - "8082:8080"
     depends_on:
-      - mysql_users
+      - mysql-users
     
 
-  mongo_express:
+  mongo-express:
     image: mongo-express:latest
-    container_name: mongo_express
+    container_name: mongo-express
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb-service
       - ME_CONFIG_MONGODB_ADMINUSERNAME=root

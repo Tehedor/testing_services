@@ -22,7 +22,7 @@ except Exception as e:
 # MySQL connection for financial data
 try:
     mysql_conn_finances = mysql.connector.connect(
-        host=os.environ.get('MYSQL_HOST', 'mysql_finances'),
+        host=os.environ.get('MYSQL_HOST', 'mysql-finances'),
         user=os.environ.get('MYSQL_USER', 'root'),
         password=os.environ.get('MYSQL_PASSWORD', 'password'),
         database=os.environ.get('MYSQL_DATABASE', 'financedb')
@@ -34,7 +34,7 @@ except mysql.connector.Error as err:
 # MySQL connection for user authentication
 try:
     mysql_conn_users = mysql.connector.connect(
-        host=os.environ.get('MYSQL_USERDB_HOST', 'mysql_users'),
+        host=os.environ.get('MYSQL_USERDB_HOST', 'mysql-users'),
         user=os.environ.get('MYSQL_USERDB_USER', 'root'),
         password=os.environ.get('MYSQL_USERDB_PASSWORD', 'password'),
         database=os.environ.get('MYSQL_USERDB_DATABASE', 'userdb')
