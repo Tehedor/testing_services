@@ -1,32 +1,38 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend
-    spec:
-      containers:
-      - name: frontend
-        image: stehedor/finance-frontend-image
-        ports:
-        - containerPort: 80
----
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
+  labels:
+    app: frontend-deployment
+    service: frontend-deployment
 spec:
-  selector:
-    app: frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
   type: LoadBalancer
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: frontend-deployment
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-deployment
+  template:
+    metadata:
+      labels:
+        app: frontend-deployment
+    spec:
+      containers:
+      - name: frontend-deployment
+        image: stehedor/finance-frontend-image
+        ports:
+        - containerPort: 80
+---
