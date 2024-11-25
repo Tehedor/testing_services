@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: localhost:5000/finance-backend-image:latest
+        image: stehedor/finance-backend-image
         ports:
         - containerPort: 5000
         env:

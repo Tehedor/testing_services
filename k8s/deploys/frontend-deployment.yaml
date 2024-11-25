@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: localhost:5000/finance-frontend-image:latest
+        image: stehedor/finance-frontend-image
         ports:
         - containerPort: 80
 ---
