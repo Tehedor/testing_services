@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-finances-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-finances
+  template:
+    metadata:
+      labels:
+        app: mysql-finances
+    spec:
+      containers:
+      - name: mysql-finances
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "financedb"
+        volumeMounts:
+        - name: mysql-data-finances
+          mountPath: /var/lib/mysql
+        - name: mysql-finances-init
+          mountPath: /docker-entrypoint-initdb.d/mysql-finances-init.sql
+      volumes:
+      - name: mysql-data-finances
+        persistentVolumeClaim:
+          claimName: mysql-finances-pvc
+      - name: mysql-finances-init
+        configMap:
+          name: mysql-finances-init-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-finances-service
+spec:
+  selector:
+    app: mysql-finances
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-users
+  template:
+    metadata:
+      labels:
+        app: mysql-users
+    spec:
+      containers:
+      - name: mysql-users
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "userdb"
+        volumeMounts:
+        - name: mysql-data-users
+          mountPath: /var/lib/mysql
+        - name: mysql-users-init
+          mountPath: /docker-entrypoint-initdb.d/mysql-users-init.sql
+      volumes:
+      - name: mysql-data-users
+        persistentVolumeClaim:
+          claimName: mysql-users-pvc
+      - name: mysql-users-init
+        configMap:
+          name: mysql-users-init-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-users-service
+spec:
+  selector:
+    app: mysql-users
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

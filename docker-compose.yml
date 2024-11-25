@@ -85,7 +85,6 @@ services:
       - "8082:8080"
     depends_on:
       - mysql_users
-    
 
   mongo_express:
     image: mongo-express:latest
@@ -99,10 +98,16 @@ services:
     depends_on:
       - mongodb
 
+  # nginx:
+  #   build: ./nginx
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - app_frontend
+  #     - app_backend
+
 volumes:
   mongo-data:
   mysql-data-finances:
   mysql-data-users:
-# /var/lib/docker/volumes/mongo-data/_data
-# /var/lib/docker/volumes/mysql-data-finances/_data
-# /var/lib/docker/volumes/mysql-data-users/_data
