@@ -15,8 +15,6 @@ spec:
       containers:
       - name: frontend
         image: localhost:5000/finance-frontend-image:latest
-        imagePullSecrets:
-        - name: myregistrysecret
         ports:
         - containerPort: 80
 ---
