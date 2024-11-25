@@ -24,7 +24,7 @@ services:
       - mysql_users
   
   app_frontend:
-    build: ./Fronted
+    build: ./Frontend
     container_name: app_frontend
     ports:
       - "80:80"
