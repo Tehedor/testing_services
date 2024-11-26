@@ -12,6 +12,10 @@ kubectl apply -f deploys/persistent-volume-claims.yaml
 echo "Aplicando despliegue de MongoDB..."
 kubectl apply -f deploys/db/mongo-deployment.yaml
 
+# Create secrets for MySQL
+echo "Creando secretos para MySQL..."
+bash deploys/db/create_secrets.sh
+
 # Aplicar despliegue de MySQL
 echo "Aplicando despliegue de MySQL..."
 kubectl apply -f deploys/db/mysql-deployment.yaml
