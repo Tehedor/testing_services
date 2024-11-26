@@ -88,12 +88,12 @@ spec:
         volumeMounts:
         - name: mysql-data-users
           mountPath: /var/lib/mysql
-        # - name: mysql-users-init
-        #   mountPath: /docker-entrypoint-initdb.d/mysql-users-init.sql
+        - name: mysql-users-init
+          mountPath: /docker-entrypoint-initdb.d/mysql-users-init.sql
       volumes:
       - name: mysql-data-users
         persistentVolumeClaim:
           claimName: mysql-users-pvc
-      # - name: mysql-users-init
-      #   configMap:
-      #     name: mysql-users-init-config
+      - name: mysql-users-init
+        configMap:
+          name: mysql-users-init-config
