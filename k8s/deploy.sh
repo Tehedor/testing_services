@@ -32,6 +32,6 @@ kubectl apply -f deploys/backend-deployment.yaml
 
 # Aplicar despliegue del frontend
 echo "Aplicando despliegue del frontend..."
-kubectl apply -f deploys/   frontend-deployment.yaml
+kubectl apply -f deploys/frontend-deployment.yaml
 
 echo "Despliegues aplicados correctamente."
