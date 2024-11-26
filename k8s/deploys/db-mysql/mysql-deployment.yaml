@@ -52,7 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-users-service
+  name: mysql-users
 spec:
   selector:
     app: mysql-users
