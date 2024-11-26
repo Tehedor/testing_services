@@ -16,8 +16,9 @@ kubectl delete -f deploys/db-mysql/mysql-deployment.yaml
 echo "Eliminando despliegue de MongoDB..."
 kubectl delete -f deploys/db-mongo/mongo-deployment.yaml
 
-# Eliminar Persistent Volumes para MySQL (si es necesario)
+# Eliminar Persistent Volumes para MongoDB y MySQL (si es necesario)
 echo "Eliminando Persistent Volumes..."
+kubectl delete -f deploys/db-mongo/mongo-persistent-volume.yaml
 kubectl delete -f deploys/db-mysql/mysql-persistent-volume.yaml
 
 # Eliminar Persistent Volume Claims para MongoDB y MySQL
@@ -29,5 +30,9 @@ kubectl delete -f deploys/db-mysql/mysql-persistent-volume-claims.yaml
 echo "Eliminando ConfigMaps..."
 kubectl delete -f deploys/db-mongo/mongo-seeder.yaml
 kubectl delete -f deploys/db-mysql/mysql-seeder.yaml
+
+# Eliminar secretos para MySQL
+echo "Eliminando secretos para MySQL..."
+kubectl delete secret mysql-secret
 
 echo "Despliegues eliminados correctamente."
