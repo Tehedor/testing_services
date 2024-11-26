@@ -38,7 +38,7 @@ spec:
         - name: mysql-data-finances
           mountPath: /var/lib/mysql
         - name: mysql-finances-init
-          mountPath: /docker-entrypoint-initdb.d/mysql-finances-init.sql
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-data-finances
         persistentVolumeClaim:
@@ -46,8 +46,9 @@ spec:
       - name: mysql-finances-init
         configMap:
           name: mysql-finances-init-config
-
-
+          items:
+          - key: mysql-finances-init.sql
+            path: mysql-finances-init.sql
 ---
 apiVersion: v1
 kind: Service
@@ -89,7 +90,7 @@ spec:
         - name: mysql-data-users
           mountPath: /var/lib/mysql
         - name: mysql-users-init
-          mountPath: /docker-entrypoint-initdb.d/mysql-users-init.sql
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-data-users
         persistentVolumeClaim:
@@ -97,3 +98,6 @@ spec:
       - name: mysql-users-init
         configMap:
           name: mysql-users-init-config
+          items:
+          - key: mysql-users-init.sql
+            path: mysql-users-init.sql
