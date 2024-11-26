@@ -1,0 +1,1 @@
+kubectl create secret generic mysql-secret --from-env-file=.env

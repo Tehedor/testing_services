@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,15 +44,3 @@ spec:
       - name: mongo-init
         configMap:
           name: mongo-init-config
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-spec:
-  selector:
-    app: mongo
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
