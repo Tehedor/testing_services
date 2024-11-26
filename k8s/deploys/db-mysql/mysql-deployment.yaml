@@ -58,7 +58,7 @@ spec:
     app: mysql-users
   ports:
     - protocol: TCP
-      port: 3306
+      port: 3307
       targetPort: 3306
 ---
 apiVersion: apps/v1
