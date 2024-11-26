@@ -37,15 +37,15 @@ spec:
         volumeMounts:
         - name: mysql-data-finances
           mountPath: /var/lib/mysql
-        - name: mysql-finances-init
-          mountPath: /docker-entrypoint-initdb.d/mysql-finances-init.sql
+        # - name: mysql-finances-init
+        #   mountPath: /docker-entrypoint-initdb.d/mysql-finances-init.sql
       volumes:
       - name: mysql-data-finances
         persistentVolumeClaim:
           claimName: mysql-finances-pvc
-      - name: mysql-finances-init
-        configMap:
-          name: mysql-finances-init-config
+      # - name: mysql-finances-init
+      #   configMap:
+      #     name: mysql-finances-init-config
 
 
 # ---
