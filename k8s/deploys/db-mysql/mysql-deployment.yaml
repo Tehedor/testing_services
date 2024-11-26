@@ -15,6 +15,13 @@ kind: Deployment
 metadata:
   name: mysql-finances-deployment
 spec:
+  initContainers:
+        - name: init-db
+          image: mysql:8.0
+          command: ["sh", "-c", "mysql -u root -p password < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
+          volumeMounts:
+          - name: mysql-finances-init
+            mountPath: /docker-entrypoint-initdb.d
   replicas: 1
   selector:
     matchLabels:
@@ -67,6 +74,13 @@ kind: Deployment
 metadata:
   name: mysql-users-deployment
 spec:
+  initContainers:
+        - name: init-db
+          image: mysql:8.0
+          command: ["sh", "-c", "mysql -u root -p password < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
+          volumeMounts:
+          - name: mysql-finances-init
+            mountPath: /docker-entrypoint-initdb.d
   replicas: 1
   selector:
     matchLabels:
