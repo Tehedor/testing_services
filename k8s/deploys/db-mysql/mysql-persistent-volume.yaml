@@ -5,7 +5,7 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: manual
+  storageClassName:  manual-finances
   capacity:
     storage: 1Gi
   accessModes:
@@ -20,7 +20,7 @@ spec:
 #   labels:
 #     type: local
 # spec:
-#   storageClassName: manual
+#   storageClassName: manual-users
 #   capacity:
 #     storage: 1Gi
 #   accessModes:

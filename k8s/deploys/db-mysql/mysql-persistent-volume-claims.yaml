@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-finances-pvc
 spec:
+  storageClassName: manual-finances
   accessModes:
     - ReadWriteOnce
   resources:
@@ -14,6 +15,7 @@ spec:
 # metadata:
 #   name: mysql-users-pvc
 # spec:
+#   storageClassName: manual-users
 #   accessModes:
 #     - ReadWriteOnce
 #   resources:
