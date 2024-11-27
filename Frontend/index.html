@@ -66,6 +66,7 @@
                     <button class="update-button" onclick="updateChart2()">Actualizar</button>
                 </div>
                 <h3>MySQL Data</h3>
+                <button onclick="updateMySQLTable()">Actualizar Tabla</button> <!-- Botón de actualizar tabla -->
                 <table id="mysql-table" border="1">
                     <thead>
                         <tr>
@@ -107,6 +108,7 @@
                     </tbody>
                 </table>
                 <h4>Add MongoDB Data</h4>
+                <button onclick="updateMongoTable()">Actualizar Tabla</button> <!-- Botón de actualizar tabla -->
                 <form id="mongo-form">
                     <input type="date" id="mongo-date" required>
                     <input type="number" id="mongo-expense" placeholder="Expense" required>
@@ -466,6 +468,49 @@
                 alert('Error adding data to MySQL. Check the console for more details.');
             }
         });
+
+        // Función para actualizar la tabla de MongoDB
+        async function updateMongoTable() {
+            try {
+                const response = await fetch('/api/data/mongodb');
+                const data = await response.json();
+                console.log('MongoDB table data:', data);
+                const mongoTableBody = document.getElementById('mongo-table').getElementsByTagName('tbody')[0];
+                mongoTableBody.innerHTML = ''; // Limpiar contenido existente
+                data.forEach(item => {
+                    const row = mongoTableBody.insertRow();
+                    row.insertCell(0).textContent = item.date;
+                    row.insertCell(1).textContent = item.expense;
+                    row.insertCell(2).textContent = item.revenue;
+                });
+                setNextMonthDate(data, 'mongo-date');
+            } catch (error) {
+                console.error('Error updating MongoDB table:', error);
+                alert('Error updating MongoDB table. Check the console for more details.');
+            }
+        }
+
+        // Función para actualizar la tabla de MySQL
+        async function updateMySQLTable() {
+            try {
+                const response = await fetch('/api/data/mysql');
+                const data = await response.json();
+                console.log('MySQL table data:', data);
+                const mysqlTableBody = document.getElementById('mysql-table').getElementsByTagName('tbody')[0];
+                mysqlTableBody.innerHTML = ''; // Limpiar contenido existente
+                data.forEach(item => {
+                    const row = mysqlTableBody.insertRow();
+                    row.insertCell(0).textContent = item.date;
+                    row.insertCell(1).textContent = item.expense;
+                    row.insertCell(2).textContent = item.revenue;
+                });
+                setNextMonthDate(data, 'mysql-date');
+            } catch (error) {
+                console.error('Error updating MySQL table:', error);
+                alert('Error updating MySQL table. Check the console for more details.');
+            }
+        }
+        
         // Función para cerrar sesión
         function logout() {
             document.getElementById('login').style.display = 'block';

@@ -5,13 +5,10 @@ import mysql.connector
 import os
 from decimal import Decimal
 from werkzeug.security import check_password_hash, generate_password_hash
-# import time
 import time
 
 app = Flask(__name__)
 CORS(app)
-# app = Flask(__name__)
-# CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir todas las solicitudes de origen
 
 # MongoDB connection
 try:
@@ -21,35 +18,37 @@ try:
 except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
 
+# Function to connect to MySQL
+def connect_to_mysql(host, user, password, database):
+    while True:
+        try:
+            connection = mysql.connector.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=database
+            )
+            print(f"Connected to MySQL ({database})")
+            return connection
+        except mysql.connector.Error as err:
+            print(f"Error connecting to MySQL ({database}): {err}")
+            time.sleep(5)  # Esperar 5 segundos antes de intentar nuevamente
+
 # MySQL connection for financial data
-while True:
-    try:
-        mysql_conn_finances = mysql.connector.connect(
-            host=os.environ.get('MYSQL_HOST', 'mysql-finances'),
-            user=os.environ.get('MYSQL_USER', 'root'),
-            password=os.environ.get('MYSQL_PASSWORD', 'password'),
-            database=os.environ.get('MYSQL_DATABASE', 'financedb')
-        )
-        print("Connected to MySQL (finances)")
-        break
-    except mysql.connector.Error as err:
-        print(f"Error connecting to MySQL (finances): {err}")
-        time.sleep(5)  # Esperar 5 segundos antes de intentar nuevamente
+mysql_conn_finances = connect_to_mysql(
+    host=os.environ.get('MYSQL_HOST', 'mysql-finances'),
+    user=os.environ.get('MYSQL_USER', 'root'),
+    password=os.environ.get('MYSQL_PASSWORD', 'password'),
+    database=os.environ.get('MYSQL_DATABASE', 'financedb')
+)
 
 # MySQL connection for user authentication
-while True:
-    try:
-        mysql_conn_users = mysql.connector.connect(
-            host=os.environ.get('MYSQL_USERDB_HOST', 'mysql-users'),
-            user=os.environ.get('MYSQL_USERDB_USER', 'root'),
-            password=os.environ.get('MYSQL_USERDB_PASSWORD', 'password'),
-            database=os.environ.get('MYSQL_USERDB_DATABASE', 'userdb')
-        )
-        print("Connected to MySQL (users)")
-        break
-    except mysql.connector.Error as err:
-        print(f"Error connecting to MySQL (users): {err}")
-        time.sleep(5)  # Esperar 5 segundos antes de intentar nuevamente
+mysql_conn_users = connect_to_mysql(
+    host=os.environ.get('MYSQL_USERDB_HOST', 'mysql-users'),
+    user=os.environ.get('MYSQL_USERDB_USER', 'root'),
+    password=os.environ.get('MYSQL_USERDB_PASSWORD', 'password'),
+    database=os.environ.get('MYSQL_USERDB_DATABASE', 'userdb')
+)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -59,10 +58,16 @@ def login():
     
     print(f"Login attempt: username={username}, password={password}")
     
-    cursor = mysql_conn_users.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-    user = cursor.fetchone()
-    cursor.close()
+    while True:
+        try:
+            cursor = mysql_conn_users.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            user = cursor.fetchone()
+            cursor.close()
+            break
+        except mysql.connector.Error as err:
+            print(f"Error querying MySQL (users): {err}")
+            mysql_conn_users.reconnect(attempts=3, delay=5)
     
     if user:
         print(f"User found: {user}")
@@ -83,18 +88,22 @@ def register():
     
     hashed_password = generate_password_hash(password)
     print(f"Register attempt: username={username}, email={email}")
-    try:
-        cursor = mysql_conn_users.cursor()
-        cursor.execute(
-            "INSERT INTO users (username, password, email) VALUES (%s, %s, %s)",
-            (username, hashed_password, email)
-        )
-        mysql_conn_users.commit()
-        cursor.close()
-        return jsonify({"status": "success", "message": "User registered successfully"}), 201
-    except mysql.connector.Error as err:
-        return jsonify({"status": "failure", "message": str(err)}), 400
-
+    
+    while True:
+        try:
+            cursor = mysql_conn_users.cursor()
+            cursor.execute(
+                "INSERT INTO users (username, password, email) VALUES (%s, %s, %s)",
+                (username, hashed_password, email)
+            )
+            mysql_conn_users.commit()
+            cursor.close()
+            break
+        except mysql.connector.Error as err:
+            print(f"Error inserting into MySQL (users): {err}")
+            mysql_conn_users.reconnect(attempts=3, delay=5)
+    
+    return jsonify({"status": "success", "message": "User registered successfully"}), 201
 
 @app.route('/data/mongodb', methods=['GET'])
 def get_mongo_data():
@@ -125,30 +134,30 @@ def add_mongo_data():
 @app.route('/data/mysql', methods=['GET'])
 def get_mysql_data():
     print("Getting data from MySQL")
-    try:
-        cursor = mysql_conn_finances.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM finances")
-        data = cursor.fetchall()
-        cursor.close()
-        
-        # Convertir los valores Decimal a números y formatear las fechas
-        formatted_data = []
-        for row in data:
-            formatted_row = {
-                'date': row['date'].strftime('%Y-%m-%d'),
-                'expense': float(row['expense']),
-                'revenue': float(row['revenue'])
-            }
-            formatted_data.append(formatted_row)
-        
-        print(f"MySQL data: {formatted_data}")
-        return jsonify(formatted_data)
-    except mysql.connector.Error as err:
-        print(f"Error getting data from MySQL: {err}")
-        return jsonify({"status": "failure", "message": str(err)}), 500
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return jsonify({"status": "failure", "message": str(e)}), 500
+    
+    while True:
+        try:
+            cursor = mysql_conn_finances.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM finances")
+            data = cursor.fetchall()
+            cursor.close()
+            break
+        except mysql.connector.Error as err:
+            print(f"Error querying MySQL (finances): {err}")
+            mysql_conn_finances.reconnect(attempts=3, delay=5)
+    
+    # Convertir los valores Decimal a números y formatear las fechas
+    formatted_data = []
+    for row in data:
+        formatted_row = {
+            'date': row['date'].strftime('%Y-%m-%d'),
+            'expense': float(row['expense']),
+            'revenue': float(row['revenue'])
+        }
+        formatted_data.append(formatted_row)
+    
+    print(f"MySQL data: {formatted_data}")
+    return jsonify(formatted_data)
 
 @app.route('/data/mysql', methods=['POST'])
 def add_mysql_data():
@@ -158,19 +167,22 @@ def add_mysql_data():
     revenue = data.get('revenue')
     
     print(f"Adding data to MySQL: date={date}, expense={expense}, revenue={revenue}")
-    try:
-        cursor = mysql_conn_finances.cursor()
-        cursor.execute(
-            "INSERT INTO finances (date, expense, revenue) VALUES (%s, %s, %s)",
-            (date, float(expense), float(revenue))
-        )
-        mysql_conn_finances.commit()
-        cursor.close()
-        return jsonify({"status": "success", "message": "Data added to MySQL"}), 201
-    except mysql.connector.Error as err:
-        print(f"Error adding data to MySQL: {err}")
-        return jsonify({"status": "failure", "message": str(err)}), 500
-
+    
+    while True:
+        try:
+            cursor = mysql_conn_finances.cursor()
+            cursor.execute(
+                "INSERT INTO finances (date, expense, revenue) VALUES (%s, %s, %s)",
+                (date, float(expense), float(revenue))
+            )
+            mysql_conn_finances.commit()
+            cursor.close()
+            break
+        except mysql.connector.Error as err:
+            print(f"Error inserting into MySQL (finances): {err}")
+            mysql_conn_finances.reconnect(attempts=3, delay=5)
+    
+    return jsonify({"status": "success", "message": "Data added to MySQL"}), 201
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
