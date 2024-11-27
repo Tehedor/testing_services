@@ -28,13 +28,13 @@ echo "Aplicando despliegue de MySQL..."
 kubectl apply -f deploys/db-mysql/mysql-deployment.yaml
 
 # Esperar a que los pods de MongoDB y MySQL estén en estado Running
-echo "Esperando a que los pods de MongoDB y MySQL estén en estado Running..."
-while [[ $(kubectl get pods -l app=mongo -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]] || \
-      [[ $(kubectl get pods -l app=mysql-finances -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]] || \
-      [[ $(kubectl get pods -l app=mysql-users -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
-  echo "Esperando a que los pods de MongoDB y MySQL estén listos..."
-  sleep 5
-done
+# echo "Esperando a que los pods de MongoDB y MySQL estén en estado Running..."
+# while [[ $(kubectl get pods -l app=mongo -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]] || \
+#       [[ $(kubectl get pods -l app=mysql-finances -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]] || \
+#       [[ $(kubectl get pods -l app=mysql-users -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
+#   echo "Esperando a que los pods de MongoDB y MySQL estén listos..."
+#   sleep 5
+# done
 
 # Aplicar despliegue del backend
 echo "Aplicando despliegue del backend..."

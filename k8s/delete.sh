@@ -17,9 +17,9 @@ echo "Eliminando despliegue de MongoDB..."
 kubectl delete -f deploys/db-mongo/mongo-deployment.yaml
 
 # Eliminar Persistent Volumes para MongoDB y MySQL (si es necesario)
-echo "Eliminando Persistent Volumes..."
-kubectl delete -f deploys/db-mongo/mongo-persistent-volume.yaml
-kubectl delete -f deploys/db-mysql/mysql-persistent-volume.yaml
+# echo "Eliminando Persistent Volumes..."
+# kubectl delete -f deploys/db-mongo/mongo-persistent-volume.yaml
+# kubectl delete -f deploys/db-mysql/mysql-persistent-volume.yaml
 
 # Eliminar Persistent Volume Claims para MongoDB y MySQL
 echo "Eliminando Persistent Volume Claims..."
