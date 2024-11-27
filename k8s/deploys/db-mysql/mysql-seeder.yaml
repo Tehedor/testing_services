@@ -46,7 +46,7 @@ data:
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
-#     -- Insertar datos iniciales (usuarios de ejemplo)
-#     INSERT INTO users (username, password, email) VALUES
-#     ('admin', 'admin_password_hash', 'admin@example.com'),
-#     ('user1', 'user1_password_hash', 'user1@example.com');
+    # -- Insertar datos iniciales (usuarios de ejemplo)
+    # INSERT INTO users (username, password, email) VALUES
+    # ('admin', 'admin_password_hash', 'admin@example.com'),
+    # ('user1', 'user1_password_hash', 'user1@example.com');
