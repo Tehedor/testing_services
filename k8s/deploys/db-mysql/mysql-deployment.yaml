@@ -24,8 +24,6 @@ spec:
       labels:
         app: mysql-finances
     spec:
-        # command: ["sh", do sleep 20 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
-        # command: ["sh", "-c", "until mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
       containers:
       - name: mysql-finances
         image: mysql:8.0
@@ -41,6 +39,10 @@ spec:
           mountPath: /var/lib/mysql
         - name: mysql-finances-init
           mountPath: /docker-entrypoint-initdb.d
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
       volumes:
       - name: mysql-data-finances
         persistentVolumeClaim:
@@ -51,10 +53,6 @@ spec:
           items:
           - key: mysql-finances-init.sql
             path: mysql-finances-init.sql
-        lifecycle:
-          postStart:
-            exec:
-              command: ["sh", "-c", " mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
 
 # ---
 # apiVersion: v1
