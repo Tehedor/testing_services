@@ -51,10 +51,10 @@ spec:
           items:
           - key: mysql-finances-init.sql
             path: mysql-finances-init.sql
-      lifecycle:
-        postStart:
-          exec:
-            command: ["sh", "-c", " mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", " mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
 
 # ---
 # apiVersion: v1
