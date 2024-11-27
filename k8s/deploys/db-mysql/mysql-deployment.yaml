@@ -95,7 +95,9 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
+              command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done"]
+              command: ["sh", "-c", "mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
+              # command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
       containers:
       - name: mysql-users
         image: mysql:8.0
