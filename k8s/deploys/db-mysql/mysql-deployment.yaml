@@ -1,62 +1,62 @@
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: mysql-finances
-# spec:
-#   selector:
-#     app: mysql-finances
-#   ports:
-#     - protocol: TCP
-#       port: 3306
-#       targetPort: 3306
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: mysql-finances-deployment
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: mysql-finances
-#   template:
-#     metadata:
-#       labels:
-#         app: mysql-finances
-#     spec:
-#       containers:
-#       - name: mysql-finances
-#         image: mysql:8.0
-#         ports:
-#         - containerPort: 3306
-#         env:
-#         - name: MYSQL_ROOT_PASSWORD
-#           value: "password"
-#         - name: MYSQL_DATABASE
-#           value: "financedb"
-#         volumeMounts:
-#         - name: mysql-data-finances
-#           mountPath: /var/lib/mysql
-#         - name: mysql-finances-init
-#           mountPath: /docker-entrypoint-initdb.d
-#         lifecycle:
-#           postStart:
-#             exec:
-#               command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done; mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
-#               # command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
-#               # command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
-#       volumes:
-#       - name: mysql-data-finances
-#         persistentVolumeClaim:
-#           claimName: mysql-finances-pvc
-#       - name: mysql-finances-init
-#         configMap:
-#           name: mysql-finances-init-config
-#           items:
-#           - key: mysql-finances-init.sql
-#             path: mysql-finances-init.sql
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-finances
+spec:
+  selector:
+    app: mysql-finances
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-finances-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-finances
+  template:
+    metadata:
+      labels:
+        app: mysql-finances
+    spec:
+      containers:
+      - name: mysql-finances
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "financedb"
+        volumeMounts:
+        - name: mysql-data-finances
+          mountPath: /var/lib/mysql
+        - name: mysql-finances-init
+          mountPath: /docker-entrypoint-initdb.d
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done; mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
+              # command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
+              # command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
+      volumes:
+      - name: mysql-data-finances
+        persistentVolumeClaim:
+          claimName: mysql-finances-pvc
+      - name: mysql-finances-init
+        configMap:
+          name: mysql-finances-init-config
+          items:
+          - key: mysql-finances-init.sql
+            path: mysql-finances-init.sql
 
-# ---
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -101,9 +101,7 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done"]
-              command: ["sh", "-c", "mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
-              # command: ["sh", "-c", "sleep 30 && mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
+              command: ["sh", "-c", "while ! mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done && mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql"]
       volumes:
       - name: mysql-data-users
         persistentVolumeClaim:
