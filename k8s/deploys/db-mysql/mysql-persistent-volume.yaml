@@ -10,8 +10,9 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/mnt/mysql-finance"
+    path: "/mnt/data/mysql-finance"
 --- 
 apiVersion: v1
 kind: PersistentVolume
