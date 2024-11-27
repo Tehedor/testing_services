@@ -27,16 +27,7 @@ spec:
       initContainers:
       - name: init-db
         image: mysql:8.0
-        command:
-          - sh
-          - -c
-          - |
-            echo "Esperando a que MySQL esté listo..."
-            until mysqladmin ping -h 127.0.0.1 --silent; do
-              sleep 2
-            done
-            echo "MySQL está listo. Ejecutando script de inicialización..."
-            mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql
+        command: ["sh", "-c", "until mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "password"
@@ -68,74 +59,74 @@ spec:
           items:
           - key: mysql-finances-init.sql
             path: mysql-finances-init.sql
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-users
-spec:
-  selector:
-    app: mysql-users
-  ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mysql-users-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mysql-users
-  template:
-    metadata:
-      labels:
-        app: mysql-users
-    spec:
-      initContainers:
-      - name: init-db
-        image: mysql:8.0
-        command:
-          - sh
-          - -c
-          - |
-            echo "Esperando a que MySQL esté listo..."
-            until mysqladmin ping -h 127.0.0.1 --silent; do
-              sleep 2
-            done
-            echo "MySQL está listo. Ejecutando script de inicialización..."
-            mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "password"
-        volumeMounts:
-        - name: mysql-users-init
-          mountPath: /docker-entrypoint-initdb.d
-      containers:
-      - name: mysql-users
-        image: mysql:8.0
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "password"
-        - name: MYSQL_DATABASE
-          value: "userdb"
-        volumeMounts:
-        - name: mysql-data-users
-          mountPath: /var/lib/mysql
-        - name: mysql-users-init
-          mountPath: /docker-entrypoint-initdb.d
-      volumes:
-      - name: mysql-data-users
-        persistentVolumeClaim:
-          claimName: mysql-users-pvc
-      - name: mysql-users-init
-        configMap:
-          name: mysql-users-init-config
-          items:
-          - key: mysql-users-init.sql
-            path: mysql-users-init.sql
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mysql-users
+# spec:
+#   selector:
+#     app: mysql-users
+#   ports:
+#     - protocol: TCP
+#       port: 3306
+#       targetPort: 3306
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mysql-users-deployment
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: mysql-users
+#   template:
+#     metadata:
+#       labels:
+#         app: mysql-users
+#     spec:
+#       initContainers:
+#       - name: init-db
+#         image: mysql:8.0
+#         command:
+#           - sh
+#           - -c
+#           - |
+#             echo "Esperando a que MySQL esté listo..."
+#             until mysqladmin ping -h 127.0.0.1 --silent; do
+#               sleep 2
+#             done
+#             echo "MySQL está listo. Ejecutando script de inicialización..."
+#             mysql -u root -ppassword userdb < /docker-entrypoint-initdb.d/mysql-users-init.sql
+#         env:
+#         - name: MYSQL_ROOT_PASSWORD
+#           value: "password"
+#         volumeMounts:
+#         - name: mysql-users-init
+#           mountPath: /docker-entrypoint-initdb.d
+#       containers:
+#       - name: mysql-users
+#         image: mysql:8.0
+#         ports:
+#         - containerPort: 3306
+#         env:
+#         - name: MYSQL_ROOT_PASSWORD
+#           value: "password"
+#         - name: MYSQL_DATABASE
+#           value: "userdb"
+#         volumeMounts:
+#         - name: mysql-data-users
+#           mountPath: /var/lib/mysql
+#         - name: mysql-users-init
+#           mountPath: /docker-entrypoint-initdb.d
+#       volumes:
+#       - name: mysql-data-users
+#         persistentVolumeClaim:
+#           claimName: mysql-users-pvc
+#       - name: mysql-users-init
+#         configMap:
+#           name: mysql-users-init-config
+#           items:
+#           - key: mysql-users-init.sql
+#             path: mysql-users-init.sql
