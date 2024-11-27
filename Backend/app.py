@@ -5,6 +5,8 @@ import mysql.connector
 import os
 from decimal import Decimal
 from werkzeug.security import check_password_hash, generate_password_hash
+# import time
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -20,28 +22,34 @@ except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
 
 # MySQL connection for financial data
-try:
-    mysql_conn_finances = mysql.connector.connect(
-        host=os.environ.get('MYSQL_HOST', 'mysql-finances'),
-        user=os.environ.get('MYSQL_USER', 'root'),
-        password=os.environ.get('MYSQL_PASSWORD', 'password'),
-        database=os.environ.get('MYSQL_DATABASE', 'financedb')
-    )
-    print("Connected to MySQL (finances)")
-except mysql.connector.Error as err:
-    print(f"Error connecting to MySQL (finances): {err}")
+while True:
+    try:
+        mysql_conn_finances = mysql.connector.connect(
+            host=os.environ.get('MYSQL_HOST', 'mysql-finances'),
+            user=os.environ.get('MYSQL_USER', 'root'),
+            password=os.environ.get('MYSQL_PASSWORD', 'password'),
+            database=os.environ.get('MYSQL_DATABASE', 'financedb')
+        )
+        print("Connected to MySQL (finances)")
+        break
+    except mysql.connector.Error as err:
+        print(f"Error connecting to MySQL (finances): {err}")
+        time.sleep(5)  # Esperar 5 segundos antes de intentar nuevamente
 
 # MySQL connection for user authentication
-try:
-    mysql_conn_users = mysql.connector.connect(
-        host=os.environ.get('MYSQL_USERDB_HOST', 'mysql-users'),
-        user=os.environ.get('MYSQL_USERDB_USER', 'root'),
-        password=os.environ.get('MYSQL_USERDB_PASSWORD', 'password'),
-        database=os.environ.get('MYSQL_USERDB_DATABASE', 'userdb')
-    )
-    print("Connected to MySQL (users)")
-except mysql.connector.Error as err:
-    print(f"Error connecting to MySQL (users): {err}")
+while True:
+    try:
+        mysql_conn_users = mysql.connector.connect(
+            host=os.environ.get('MYSQL_USERDB_HOST', 'mysql-users'),
+            user=os.environ.get('MYSQL_USERDB_USER', 'root'),
+            password=os.environ.get('MYSQL_USERDB_PASSWORD', 'password'),
+            database=os.environ.get('MYSQL_USERDB_DATABASE', 'userdb')
+        )
+        print("Connected to MySQL (users)")
+        break
+    except mysql.connector.Error as err:
+        print(f"Error connecting to MySQL (users): {err}")
+        time.sleep(5)  # Esperar 5 segundos antes de intentar nuevamente
 
 @app.route('/login', methods=['POST'])
 def login():
