@@ -25,7 +25,7 @@ kubectl delete -f deploys/db-mongo/mongo-deployment.yaml
 echo "Eliminando Persistent Volume Claims..."
 kubectl delete -f deploys/db-mongo/mongo-persistent-volume-claims.yaml
 kubectl delete -f deploys/db-mysql/mysql-persistent-volume-claims.yaml
-
+### Eliminar referencias a los PVCs en los PVs manualmente, sino luego no se podria asociar un nuevo PVC a los PVs 
 kubectl patch pv mongo-pv-volume -p '{"spec":{"claimRef": null}}'
 kubectl patch pv mysql-finance-pv-volume -p '{"spec":{"claimRef": null}}'
 kubectl patch pv mysql-users-pv-volume -p '{"spec":{"claimRef": null}}'

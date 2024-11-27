@@ -18,12 +18,19 @@ data:
         expense DECIMAL(10, 2) NOT NULL
     );
 
-    -- Insertar datos iniciales
-    INSERT INTO finances (date, revenue, expense) VALUES 
-    ('2024-01-01', 5000.00, 3000.00),
-    ('2024-02-01', 6000.00, 4000.00),
-    ('2024-03-01', 7000.00, 4500.00),
-    ('2024-04-01', 8000.00, 5000.00);
+    -- Insertar datos iniciales solo si la tabla 'finances' fue creada
+        INSERT INTO finances (date, revenue, expense)
+        SELECT '2024-01-01', 5000.00, 3000.00
+        WHERE NOT EXISTS (SELECT 1 FROM finances LIMIT 1);
+        INSERT INTO finances (date, revenue, expense)
+        SELECT '2024-02-01', 6000.00, 4000.00
+        WHERE NOT EXISTS (SELECT 1 FROM finances LIMIT 1);
+        INSERT INTO finances (date, revenue, expense)
+        SELECT '2024-03-01', 7000.00, 4500.00
+        WHERE NOT EXISTS (SELECT 1 FROM finances LIMIT 1);
+        INSERT INTO finances (date, revenue, expense)
+        SELECT '2024-04-01', 8000.00, 5000.00
+        WHERE NOT EXISTS (SELECT 1 FROM finances LIMIT 1);
 ---
 apiVersion: v1
 kind: ConfigMap
