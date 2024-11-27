@@ -28,7 +28,7 @@ spec:
       - name: init-db
         image: mysql:8.0
         
-        command: ["sh","sleep 60 && echo  "Esperando a que MySQL esté listo...""]
+        command: ["sh","sleep 30 && echo  "Esperando a que MySQL esté listo...""]
         # command: ["sh", "-c", "sleep 60 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
         # command: ["sh", do sleep 20 && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
         # command: ["sh", "-c", "until mysqladmin ping -h 127.0.0.1 --silent; do sleep 2; done && mysql -u root -ppassword financedb < /docker-entrypoint-initdb.d/mysql-finances-init.sql"]
