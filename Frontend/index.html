@@ -94,7 +94,10 @@
                     <canvas id="chart1"></canvas>
                     <button class="update-button" onclick="updateChart1()">Actualizar</button>
                 </div>
-                <h3>MongoDB Data</h3>
+                <div>
+                    <h3>MongoDB Data</h3>
+                    <button onclick="updateMongoTable()">Actualizar Tabla</button> <!-- Botón de actualizar tabla -->
+                </div>
                 <table id="mongo-table" border="1">
                     <thead>
                         <tr>
@@ -107,14 +110,15 @@
                         <!-- Contenido de la tabla se llenará dinámicamente -->
                     </tbody>
                 </table>
-                <h4>Add MongoDB Data</h4>
-                <button onclick="updateMongoTable()">Actualizar Tabla</button> <!-- Botón de actualizar tabla -->
-                <form id="mongo-form">
-                    <input type="date" id="mongo-date" required>
-                    <input type="number" id="mongo-expense" placeholder="Expense" required>
-                    <input type="number" id="mongo-revenue" placeholder="Revenue" required>
-                    <button type="submit">Add</button>
-                </form>
+                <div>
+                    <h4>Add MongoDB Data</h4>
+                    <form id="mongo-form">
+                        <input type="date" id="mongo-date" required>
+                        <input type="number" id="mongo-expense" placeholder="Expense" required>
+                        <input type="number" id="mongo-revenue" placeholder="Revenue" required>
+                        <button type="submit">Add</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
